@@ -84,7 +84,7 @@ We will employ various image inpainting techniques on one set of testing dataset
 <h4>Traditional Approaches</h4>
 <div style="padding-left: 2rem">
   <h5>PatchMatch</h5>
-  One algorithm we will implement is PatchMatch. This algorithm utilizes a randomized correspondence algorithm to quickly find approximate nearest neighbor matches between image patches.
+  One algorithm we will implement is PatchMatch. This algorithm utilizes a randomized correspondence algorithm to quickly find approximate nearest neighbor matches between image patches. With natural coherence in the images, we can then propagate such matches quickly to surrounding areas.
   <br><br>
   <h5>Image Completion using Planar Structure Guidance</h5>
   Another classical algorithm we pick is based on a paper named <i>Image Completion using Planar Structure Guidance</i>. As the name suggests, the approach moves beyond low-level cues by exploiting mid-level cues related to structural or spatial properties present in the image. These cues then provide guidance toward the low-level completion algorithm to make better probabilistic inferences on which patches to use.
