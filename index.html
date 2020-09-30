@@ -2,8 +2,7 @@
 <html lang="en"><head>  
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
-  <title>Computer Vision Class Project
-  | ECE, Virginia Tech | Fall 2015: ECE 5554/4984</title>
+  <title>CV Group Project | Georgia Tech | Fall 2020: CS 4476</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -55,11 +54,11 @@ One or two sentences on the motivation behind the problem you are solving. One o
 <br><br>
 <!-- figure -->
 <h3>Teaser Figure</h3>
-A figure that conveys the main idea behind the project or the main application being addressed.
+<!--A figure that conveys the main idea behind the project or the main application being addressed.-->
 <br><br>
 <!-- Main Illustrative Figure --> 
 <div style="text-align: center;">
-<img style="height: 200px;" alt="" src="mainfig.png">
+<img style="width: 80%" alt="" src="mainfig.png">
 </div>
 
 <br><br>
@@ -83,19 +82,19 @@ We will employ various image inpainting techniques on one set of testing dataset
 
 <h4>Traditional Approaches</h4>
 <div style="padding-left: 2rem">
-  <h5>PatchMatch</h5>
+  <h5>PatchMatch [1]</h5>
   One algorithm we will implement is PatchMatch. This algorithm utilizes a randomized correspondence algorithm to quickly find approximate nearest neighbor matches between image patches. With natural coherence in the images, we can then propagate such matches quickly to surrounding areas.
   <br><br>
-  <h5>Image Completion using Planar Structure Guidance</h5>
+  <h5>Image Completion using Planar Structure Guidance [2]</h5>
   Another classical algorithm we pick is based on a paper named <i>Image Completion using Planar Structure Guidance</i>. As the name suggests, the approach moves beyond low-level cues by exploiting mid-level cues related to structural or spatial properties present in the image. These cues then provide guidance toward the low-level completion algorithm to make better probabilistic inferences on which patches to use.
   <br><br>
-  <h5>Exemplar-Based Image Inpainting</h5>
+  <h5>Exemplar-Based Image Inpainting [3]</h5>
   This last algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
   <br><br>
 </div>
 <h4>Learning-Based</h4>
 <div style="padding-left: 2rem">
-  <h5>GAN - Semantic Image Inpainting</h5>
+  <h5>GAN - Semantic Image Inpainting [4]</h5>
   Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass.
   <br><br>
 </div>
@@ -115,10 +114,10 @@ We hope that our experiments can reveal under which conditions does each model o
 
 
 <!-- Main Results Figure --> 
-<div style="text-align: center;">
+<!-- <div style="text-align: center;">
 <img style="height: 300px;" alt="" src="results.png">
 </div>
-<br><br>
+<br><br> -->
 
 <!-- Results -->
 <!--
@@ -138,10 +137,26 @@ Show several visual examples of inputs/outputs of your system (success cases and
 <!-- References -->
 <h3>References</h3>
 <ul>
-  <li>Traditional Paper 1</li>
-  <li>Traditional Paper 2</li>
-  <li>Traditional Paper 3</li>
-  <li>GAN paper</li>
+  <li>
+    [1] Connelly Barnes, Eli Shechtman, Adam Finkelstein, and Dan B Goldman.
+    "PatchMatch: A Randomized Correspondence Algorithm for Structural Image Editing."
+    <i>ACM Transactions on Graphics (Proc. SIGGRAPH) 28(3)</i>, August 2009
+  </li>
+  <li>
+    [2] Huang, J. B., Kang, S. B., Ahuja, N., & Kopf, J. (2014).
+    Image completion using planar structure guidance.
+    <i>ACM Transactions on Graphics, 33(4)</i>, [129].
+  </li>
+  <li>
+    [3] A. Criminisi, P. Perez and K. Toyama,
+    "Region filling and object removal by exemplar-based image inpainting,"
+    in <i>IEEE Transactions on Image Processing</i>,
+    vol. 13, no. 9, pp. 1200-1212, Sept. 2004, doi: 10.1109/TIP.2004.833105.
+  </li>
+  <li>
+    [4] Zhang, Haoran & Hu, Zhenzhen & Luo, Changzhi & Zuo, Wangmeng & Wang, Meng. (2018).
+    Semantic Image Inpainting with Progressive Generative Networks. 1939-1947. 10.1145/3240508.3240625.
+  </li>
 </ul>
 
 <hr>
