@@ -91,7 +91,7 @@ We will employ various image inpainting techniques on one set of testing dataset
   <h5>Exemplar-Based Image Inpainting [3]</h5>
   This algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
   <br><br>
-  <h5>Exemplar-Based Pnpainting Based on Local Geometry [4]</h5>
+  <h5>Exemplar-Based Inpainting Based on Local Geometry [4]</h5>
   The last algorithm, Exemplar-based inpainting based on local Geometry, is an inpainting approach that combines the ideas of both PDE-based and exemplar-based schemes. The algorithm uses an exemplar-based scheme, doing sampling and the copying of the texture from the image itself. It contains two steps - the first step is defining a filling order to enable the propagation of structure in the isophote direction, and the second one is performing a template match to find the best fit texture to fill in the hole.
   <br><br>
 </div>
