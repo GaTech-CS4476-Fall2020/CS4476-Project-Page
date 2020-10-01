@@ -89,12 +89,15 @@ We will employ various image inpainting techniques on one set of testing dataset
   Another classical algorithm we pick is based on a paper named <i>Image Completion using Planar Structure Guidance</i>. As the name suggests, the approach moves beyond low-level cues by exploiting mid-level cues related to structural or spatial properties present in the image. These cues then provide guidance toward the low-level completion algorithm to make better probabilistic inferences on which patches to use.
   <br><br>
   <h5>Exemplar-Based Image Inpainting [3]</h5>
-  This last algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
+  This algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
+  <br><br>
+  <h5>Exemplar-Based Pnpainting Based on Local Geometry [4]</h5>
+  The last algorithm, Exemplar-based inpainting based on local Geometry, is an inpainting approach that combines the ideas of both PDE-based and exemplar-based schemes. The algorithm uses an exemplar-based scheme, doing sampling and the copying of the texture from the image itself. It contains two steps - the first step is defining a filling order to enable the propagation of structure in the isophote direction, and the second one is performing a template match to find the best fit texture to fill in the hole.
   <br><br>
 </div>
 <h4>Learning-Based</h4>
 <div style="padding-left: 2rem">
-  <h5>GAN - Semantic Image Inpainting [4]</h5>
+  <h5>GAN - Semantic Image Inpainting [5]</h5>
   Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass.
   <br><br>
 </div>
@@ -140,7 +143,7 @@ Show several visual examples of inputs/outputs of your system (success cases and
   <li>
     [1] Connelly Barnes, Eli Shechtman, Adam Finkelstein, and Dan B Goldman.
     "PatchMatch: A Randomized Correspondence Algorithm for Structural Image Editing."
-    <i>ACM Transactions on Graphics (Proc. SIGGRAPH) 28(3)</i>, August 2009
+    <i>ACM Transactions on Graphics (Proc. SIGGRAPH) 28(3)</i>, August 2009.
   </li>
   <li>
     [2] Huang, J. B., Kang, S. B., Ahuja, N., & Kopf, J. (2014).
@@ -154,7 +157,12 @@ Show several visual examples of inputs/outputs of your system (success cases and
     vol. 13, no. 9, pp. 1200-1212, Sept. 2004, doi: 10.1109/TIP.2004.833105.
   </li>
   <li>
-    [4] Zhang, Haoran & Hu, Zhenzhen & Luo, Changzhi & Zuo, Wangmeng & Wang, Meng. (2018).
+    [4] O. Le Meur, J. Gautier and C. Guillemot, "Examplar-based inpainting based on local geometry,"
+    <i>2011 18th IEEE International Conference on Image Processing</i>,
+    Brussels, 2011, pp. 3401-3404, doi: 10.1109/ICIP.2011.6116441.
+  </li>
+  <li>
+    [5] Zhang, Haoran & Hu, Zhenzhen & Luo, Changzhi & Zuo, Wangmeng & Wang, Meng. (2018).
     Semantic Image Inpainting with Progressive Generative Networks. 1939-1947. 10.1145/3240508.3240625.
   </li>
 </ul>
