@@ -22,7 +22,7 @@ color: #FF9900;
 .wrapper {
   display: grid;
   grid-template-columns: 500px 500px 500px;
-  /* grid-gap: 10px; */
+  grid-gap: 10px;
   background-color: #fff;
   /* color: #444; */
 }
@@ -156,8 +156,15 @@ The patch size is another hyperparameter we can adjust to obtain the optimal res
   <div><img style="width: 70%" alt="" src="imgs/c2.png"></div>
 </div>
 
-
-
+<h4>Semantic Image Inpainting</h4>
+Considering that GAN is a learning-based technique, we will utilize a training dataset and a testing dataset for better accuracy and generalizability. Testing and training sets are extracted from Paris StreetView and ImageNet dataset. Paris StreetView dataset consists of 14,900 images for training and 100 images for testing. The visual class of dataset focuses on the Street View, such as houses, trees, street, skies, and other objects. Whereas ImageNet dataset contains about 15 million images associated with more than 20,000 categories. Considering the experimental configuration of Context Encode, we extract a subset of the ImageNet dataset in this experiment. Specifically, we randomly select 100,000 images from 1000 object categories according to the manner provided by Context Encoder. The testing set is painted in the same way of training progress. 
+<br><br>
+We are proving that our PGN-based approach is superior to other traditional approaches by comparing the results of phased inpainting to one-action inpainting. As shown in the figure below, our PGN-based phased approach yields better image inpainting results than inpainting that is completed in one go.</br>
+<div><img style="width: 40%" alt="" src="imgs/se1.png"></div>
+The generative networks, precisely UNet, aids in preserving information in image-to-image translation tasks. The discriminative networks, in our case PatchGAN, determine how natural the generated image is. Besides the two networks, we also measure the quality of our result with a loss function, which consists of a reconstruction (L1) loss, an adversarial loss and a total variation loss.
+<br><br>
+We also experimented with different adversarial loss values, and found that values that are too large may produce a distorted image when high-level semantic features can’t be discriminated. The figure below shows that an adversarial loss value of 0.001 is optimal.</br>
+<div><img style="width: 60%" alt="" src="imgs/se2.png"></div>
 
 
 <!-- <h4>Expectation of Outcome</h4>
@@ -166,13 +173,15 @@ We hope that our experiments can reveal under which conditions does each model o
 <h4>Qualitative Results</h4>
 <h5>Success Cases</h5>
 <div class='wrapper'>
-  <div><img style="width: 60%" alt="" src="imgs/res-01.gif"></div>
-  <div><img style="width: 40%" alt="" src="imgs/res-22.gif"></div>
+  <div><img style="width: 100%" alt="" src="imgs/se3.png"></div>
+  <div><img style="width: 100%" alt="" src="imgs/res-01.gif"></div>
+  <div><img style="width: 60%" alt="" src="imgs/res-22.gif"></div>
+
 </div>
 
 <h5>Failure Cases</h5>
 <div class='wrapper'>
-  <div><img style="width: 60%" alt="" src="imgs/res-09.gif"></div>
+  <div><img style="width: 100%" alt="" src="imgs/res-09.gif"></div>
   <div><img style="width: 100%" alt="" src="imgs/f2.png"></div>
 </div>
 
@@ -180,6 +189,8 @@ We hope that our experiments can reveal under which conditions does each model o
 For the sparse representation method, we believe this way of inpainting can be applied to many scenarios and the results are promising from our experiments. Still, there is still a huge space for us to tweak the parameters to achieve better results. Besides, as a drawback of this approach, it is impossible to find a fixed set of parameters that will work for all the images and we will need to bind the optimal set of parameters for different sizes of images. Still, filling a missing part of an image by a sparse representation of other patches has its reasonable logic. In the future, we will try different combinations of parameters as well as different cost functions.
 <br><br>
 Besides, the image completion using planar structure guidance does better than a naive approach. However, there are many drawbacks to this approach. First, the regenerated image is fuzzy compared to the ground-truth, and the boundary of artifacts is clearly visible no matter how good you are at tuning the hyperparameters. On the other hand, the algorithm is also destined to fail on more complex images like the first one we picked. To hypothetically improve the algorithm’s performance, we may increase the sampling from the nearest 2 neighbors to 4 or more neighbors, which will give a holistic view of the surroundings. We may also adjust the weights of the 4 cost functions defining our objective function in optimization.
+<br><br>
+For Semantic Image Inpainting, we have seen great image inpainting performance on the Paris StreetView dataset, and will be applying our model on the ImageNet dataset for the final product.
 <br><br>
 The next step of our project is to finish implementing the Exemplar-based Image Inpainting. We will first generate textures and structures based on samples selected from surrounding regions. After that, we will compute patch priorities, propagate texture and structure information, and update confidence values. Then, we’ll optimize the implementation based on the performance of our code. 
 <br><br>
