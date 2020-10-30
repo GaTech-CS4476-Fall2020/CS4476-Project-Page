@@ -19,6 +19,13 @@ color: #3366CC;
 .data {
 color: #FF9900;
 }
+.wrapper {
+  display: grid;
+  grid-template-columns: 500px 500px 500px;
+  /* grid-gap: 10px; */
+  background-color: #fff;
+  /* color: #444; */
+}
 </style>
   
 <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -75,30 +82,36 @@ The expected output of the system would be multiple images impainted by differen
 
 <br><br>
 <!-- Approach -->
-<h3>Approach</h3>
+<h3>Detailed Approach</h3>
 
 We will employ various image inpainting techniques on one set of testing dataset. Our approaches include three classical, non-learning methods and one learning based deep architecture using GAN. After all implementations, we will then compare which technique is most suitable for each input image.
 <br><br>
 
 <h4>Traditional Approaches</h4>
 <div style="padding-left: 2rem">
-  <h5>PatchMatch [1]</h5>
-  One algorithm we will implement is PatchMatch. This algorithm utilizes a randomized correspondence algorithm to quickly find approximate nearest neighbor matches between image patches. With natural coherence in the images, we can then propagate such matches quickly to surrounding areas.
+  <h5>Image inpainting via dictionary learning and sparse representation [1]</h5>
+  <!-- One algorithm we will implement is PatchMatch. This algorithm utilizes a randomized correspondence algorithm to quickly find approximate nearest neighbor matches between image patches. With natural coherence in the images, we can then propagate such matches quickly to surrounding areas. -->
+  In the original paper, it is a novel patch-wise image inpainting algorithm using the image signal sparse representation over a redundant dictionary. Within this approach, we construct a redundant signal dictionary by directly sampling from the intact source region of the current image. Then we sequentially compute the sparse representation for each incomplete patch at the boundary of the hole and recover it until the whole hole is filled. When our group approached this method, we made some simplifications. For each missing part of an image, we want to take into account some numbers of patches that contain the most information in common with the missing part. In other words, we try to approximate a part of an image by a linear combination of other patches in the image. 
   <br><br>
   <h5>Image Completion using Planar Structure Guidance [2]</h5>
-  Another classical algorithm we pick is based on a paper named <i>Image Completion using Planar Structure Guidance</i>. As the name suggests, the approach moves beyond low-level cues by exploiting mid-level cues related to structural or spatial properties present in the image. These cues then provide guidance toward the low-level completion algorithm to make better probabilistic inferences on which patches to use.
+  <!-- Another classical algorithm we pick is based on a paper named <i>Image Completion using Planar Structure Guidance</i>. As the name suggests, the approach moves beyond low-level cues by exploiting mid-level cues related to structural or spatial properties present in the image. These cues then provide guidance toward the low-level completion algorithm to make better probabilistic inferences on which patches to use. -->
+  The algorithm uses pre-computed vanishing points using the approach as suggested in the original paper. We used this program to output a list of vanishing line endpoints because our algorithm relies on them to infer spatial and structural cues.We then used these parallel lines to detect planar surfaces in space and regularities (artificial repeated patterns). We then computed the SIFT descriptor for each feature point and found the two nearest neighbors to the missing region of interest. The different detected planes are used as the separators when considering the neighbors, so only the neighbors on the same plane will be considered matches. The matched patches then underwent an affine transformation to fit into the missing locations. Finally, the image completion technique depended on a variant of Wexler’s algorithm with random search and propagation to complete the low-level matching.
+
   <br><br>
   <h5>Exemplar-Based Image Inpainting [3]</h5>
   This algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
   <br><br>
-  <h5>Exemplar-Based Inpainting Based on Local Geometry [4]</h5>
+  <!-- <h5>Exemplar-Based Inpainting Based on Local Geometry [4]</h5>
   The last algorithm, Exemplar-based inpainting based on local Geometry, is an inpainting approach that combines the ideas of both PDE-based and exemplar-based schemes. The algorithm uses an exemplar-based scheme, doing sampling and the copying of the texture from the image itself. It contains two steps - the first step is defining a filling order to enable the propagation of structure in the isophote direction, and the second one is performing a template match to find the best fit texture to fill in the hole.
-  <br><br>
+  <br><br> -->
 </div>
 <h4>Learning-Based</h4>
 <div style="padding-left: 2rem">
   <h5>GAN - Semantic Image Inpainting [5]</h5>
-  Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass.
+  <!-- Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass. -->
+  Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass. 
+Different from the canonical diffusion-based and example-based approaches, our PGN-based approach is capable of synthesizing semantic content to recover large missing areas with a less computationally expensive framework. We will leverage deep learning techniques, devising semantic image inpainting as a curriculum learning problem, to generate realistic areas to replace large areas of corrupted pixels. We are motivated to utilize the PGN approach considering that the process of inpainting subregions farther from (marked with a green square in the figure below) known pixels is more difficult than inpainting subregions closer to (marked with a red square) known pixels. Therefore, we will be inpainting from exterior to interior missing subregions.</br>
+<img style="width: 20%" alt="" src="imgs/pgn.png"></br>
   <br><br>
 </div>
 
@@ -111,9 +124,71 @@ For the learning-based part, considering that GAN is a learning-based technique,
 <br><br>
 We also plan to use our own data. Our data collection is used for comparing and analyzing how each of the implementations works on various types of inpainting issues. We would use images with/without text, images with a large number/small number of holes, images with big/small holes, images with holes that are in a color that is close/distinctive from surrounding colors, portrait images, landscape images, etc. In this way, we make comparison groups, use images within a group as inputs for our implementations, and print the outputs. We compare the output images and analyze the effectiveness of the implementations. We also expect to conclude that there are some implementations that work distinctively better for certain inpainting issues.
 <br><br>
-<h4>Expectation of Outcome</h4>
-We hope that our experiments can reveal under which conditions does each model or algorithm perform the best. We also expect the experiments to reveal the similarities as well as differences between traditional computer vision methods and machine-learning-based algorithms. Besides, we want to see the effects of combining the results of individual models. However, there will be some uncertainties about the potential outcomes. We are not sure if the ensemble model, combining different models,  could outperform a single model in most cases. We are also not sure if modern ml-based algorithms, such as GAN, could outperform traditional methods in most scenarios.
+
+<h4>Image inpainting via dictionary learning and sparse representation</h4>
+For this method, we used the datasets from photo galleries provided by USPS, and this database is already separated into training and testing sets. We did several experiments on some of the functions and parameters. We first compared different cost functions including MSE, L1 or Lasso regularization, and L2 or Ridge regularization. Though the differences in costs were not far away, we chose to use L1/Lasso regularization as our cost function because it tends to assign 0 in the weight vector, and we hope not to use too many patches to synthesize the missing part. We then conducted experiments on several parameters including patch_size, step(iteration step for dictionary construction), alpha(the importance given to the sparsity of the weight vector), max_iterations, and tolerance(the minimum optimization criterion before stopping). 
 <br><br>
+<b>a) α = 0.5, which is too big. We performed a linear combination with too many patches, leading to this blur effect.</b></br>
+<img style="width: 80%" alt="" src="imgs/outdoor_gros_alpha.png"></br>
+
+<b>b) patch_size=5, which is too small. The patches do not contain enough information to be properly reconstructed. In addition, the pixels that have just been approximated are taken into account too much, still leading to a bad result.</b></br>
+<img style="width: 80%" alt="" src="imgs/outdoor_parfait.png"></br>
+
+<b>c) max _iterations = 1000, which is too little. We are not able to find the optimal weights for our reconstruction after reaching this max iteration number.</b></br>
+<img style="width: 80%" alt="" src="imgs/outdoor_petit_patch.png"></br>
+
+<b>d) α = 0.0001, patch_size = 101, max_iterations = 100,000. The reconstruction looks visually correct, but it can surely be improved even further.</b></br>
+<img style="width: 80%" alt="" src="imgs/outdoor_peu_iter.png"></br>
+We learn from those experiments that it is critical to set appropriate values for those parameters. The patch size has to have a size that encodes enough information to be useful for reconstruction. The alpha, generally, is always better to be set to a smaller value because a more sparse combination of patches normally has better results. The max iterations should be set to a larger value since it usually takes more iterations to find a good weight vector for a regular-sized picture.
+<br><br>
+
+<h4>Image Completion using Planar Structure Guidance</h4>
+We used a few of the authors’ provided images as well as our own photo collections to demonstrate the effect. The objective function we tried to minimize is a weighted combination of four loss functions: appearance cost, guidance cost, orthogonal direction cost, and proximity cost. We started with a resized image with low resolution to have just a small number of pixels to optimize, and gradually sharpened the starting image close to the original image size. Below is a table of costs for one sample image when the patch size is 9. Here we show how the average cost decreases as we run more iterations.</br>
+<div class='wrapper'>
+  <div><img style="width: 80%" alt="" src="imgs/g1.png"></div>
+  <div><img style="width: 65%" alt="" src="imgs/cost.png"></div>
+</div>
+From the above table and figure, we can observe a trade-off between precision and time. The more resolution we want from the final result, the longer it takes to complete!
+<br><br>
+The patch size is another hyperparameter we can adjust to obtain the optimal results. Through our experimentation, we found a larger patch size (PS) generally leads to worse performance, where the patch size must be constrained as an odd number.
+<div class='wrapper'>
+  <div><img style="width: 80%" alt="" src="imgs/g2.png"></div>
+  <div><img style="width: 70%" alt="" src="imgs/c2.png"></div>
+</div>
+
+
+
+
+
+<!-- <h4>Expectation of Outcome</h4>
+We hope that our experiments can reveal under which conditions does each model or algorithm perform the best. We also expect the experiments to reveal the similarities as well as differences between traditional computer vision methods and machine-learning-based algorithms. Besides, we want to see the effects of combining the results of individual models. However, there will be some uncertainties about the potential outcomes. We are not sure if the ensemble model, combining different models,  could outperform a single model in most cases. We are also not sure if modern ml-based algorithms, such as GAN, could outperform traditional methods in most scenarios.
+<br><br> -->
+<h4>Qualitative Results</h4>
+<h5>Success Cases</h5>
+<div class='wrapper'>
+  <div><img style="width: 60%" alt="" src="imgs/res-01.gif"></div>
+  <div><img style="width: 40%" alt="" src="imgs/res-22.gif"></div>
+</div>
+
+<h5>Failure Cases</h5>
+<div class='wrapper'>
+  <div><img style="width: 60%" alt="" src="imgs/res-09.gif"></div>
+  <div><img style="width: 100%" alt="" src="imgs/f2.png"></div>
+</div>
+
+<h4>Conclusion and Future Work</h4>
+For the sparse representation method, we believe this way of inpainting can be applied to many scenarios and the results are promising from our experiments. Still, there is still a huge space for us to tweak the parameters to achieve better results. Besides, as a drawback of this approach, it is impossible to find a fixed set of parameters that will work for all the images and we will need to bind the optimal set of parameters for different sizes of images. Still, filling a missing part of an image by a sparse representation of other patches has its reasonable logic. In the future, we will try different combinations of parameters as well as different cost functions.
+<br><br>
+Besides, the image completion using planar structure guidance does better than a naive approach. However, there are many drawbacks to this approach. First, the regenerated image is fuzzy compared to the ground-truth, and the boundary of artifacts is clearly visible no matter how good you are at tuning the hyperparameters. On the other hand, the algorithm is also destined to fail on more complex images like the first one we picked. To hypothetically improve the algorithm’s performance, we may increase the sampling from the nearest 2 neighbors to 4 or more neighbors, which will give a holistic view of the surroundings. We may also adjust the weights of the 4 cost functions defining our objective function in optimization.
+<br><br>
+The next step of our project is to finish implementing the Exemplar-based Image Inpainting. We will first generate textures and structures based on samples selected from surrounding regions. After that, we will compute patch priorities, propagate texture and structure information, and update confidence values. Then, we’ll optimize the implementation based on the performance of our code. 
+<br><br>
+After finishing implementation, we would use plenty of images as input. we will apply this algorithm on different (types) of input images and compare the results both qualitatively and quantitatively. Specifically, we’ll compare theirrun-time and aesthetic performance in handling text inpainting, portrait inpainting, images with large holes, etc. We will discuss what are the successful cases and what are the failure cases, then dig into some of the potential reasons behind each. 
+<br><br>
+After all that, we will make comparisons between the all inpainting approaches that we have implemented. We’ll analyze the strength and weakness of each implementation. Based on the comparisons, we also expect to come up with other insights into image inpainting.
+
+
+
 
 
 <!-- Main Results Figure --> 
@@ -141,9 +216,9 @@ Show several visual examples of inputs/outputs of your system (success cases and
 <h3>References</h3>
 <ul>
   <li>
-    [1] Connelly Barnes, Eli Shechtman, Adam Finkelstein, and Dan B Goldman.
-    "PatchMatch: A Randomized Correspondence Algorithm for Structural Image Editing."
-    <i>ACM Transactions on Graphics (Proc. SIGGRAPH) 28(3)</i>, August 2009.
+    [1] Bin Shen and Wei Hu and Zhang, Yimin and Zhang, Yu-Jin.
+    "Image Inpainting via Sparse Representation."
+    <i>Proceedings of the 2009 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP ’09).</i>
   </li>
   <li>
     [2] Huang, J. B., Kang, S. B., Ahuja, N., & Kopf, J. (2014).
