@@ -99,15 +99,13 @@ We will employ various image inpainting techniques on one set of testing dataset
 
   <br><br>
   <h5>Exemplar-Based Image Inpainting [3]</h5>
-  This algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. It introduced a term named confidence when selecting regions used for inpainting. This leads to important textures -- linear structures in this case -- to be better preserved during the hole-filling process. 
+  This algorithm removes sections in the input image marked by user and inpaint by generating textures and structures based on samples selected from surrounding regions. They are inspired by the partial differential equations of physical heat flow, and work convincingly as restoration algorithms. Unlike traditional algorithms, it pays special attention to linear structures -- It fills holes in images by propagating linear structures into the target region via diffusion. For a given image, the user firstly selects the region that would be inpainted, calling it as the target region. The rest of the image is the source region. Then, we create a template window in the source region. After that, there are three steps. Firstly, we compute patch priorities, and we determine the priority values of each patch on the fill front. Secondly, we propagate texture and structure information on the target region. There is a patch with the highest priority, and we use data from the source region to fill that patch. Thirdly, we update confidence values for the patches that have been assigned with new pixel values, so that we can measure the relative confidence of patches on the fill front. 
   <br><br>
-  <!-- <h5>Exemplar-Based Inpainting Based on Local Geometry [4]</h5>
-  The last algorithm, Exemplar-based inpainting based on local Geometry, is an inpainting approach that combines the ideas of both PDE-based and exemplar-based schemes. The algorithm uses an exemplar-based scheme, doing sampling and the copying of the texture from the image itself. It contains two steps - the first step is defining a filling order to enable the propagation of structure in the isophote direction, and the second one is performing a template match to find the best fit texture to fill in the hole.
-  <br><br> -->
+
 </div>
 <h4>Learning-Based</h4>
 <div style="padding-left: 2rem">
-  <h5>GAN - Semantic Image Inpainting [5]</h5>
+  <h5>GAN - Semantic Image Inpainting [4]</h5>
   <!-- Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass. -->
   Semantic image inpainting with progressive generative networks utilizes deep learning techniques, specifically generative adversarial networks (GANs). The newly proposed model comprises an end-to-end framework called progressive generative networks (PGNs) followed by a long short-term memory (LSTM) framework. The hole filling process is broken down into several phases of PGN and connected together with LSTM in a single forward pass. 
 Different from the canonical diffusion-based and example-based approaches, our PGN-based approach is capable of synthesizing semantic content to recover large missing areas with a less computationally expensive framework. We will leverage deep learning techniques, devising semantic image inpainting as a curriculum learning problem, to generate realistic areas to replace large areas of corrupted pixels. We are motivated to utilize the PGN approach considering that the process of inpainting subregions farther from (marked with a green square in the figure below) known pixels is more difficult than inpainting subregions closer to (marked with a red square) known pixels. Therefore, we will be inpainting from exterior to interior missing subregions.</br>
@@ -155,6 +153,38 @@ The patch size is another hyperparameter we can adjust to obtain the optimal res
   <div><img style="width: 80%" alt="" src="imgs/g2.png"></div>
   <div><img style="width: 70%" alt="" src="imgs/c2.png"></div>
 </div>
+<br>
+<h4>Exemplar-Based Image Inpainting</h4>
+For this project, we have mainly used photos randomly chosen from Google as our primary data set. 
+We have applied this algorithm onto 15 photos with each significantly different from others in terms of semantics, colors, structures, textures, features, etc. 
+We decided to use random photos from Google as my testing data set in order to test the algorithm on a variety of photos so that We could measure whether the algorithm will perform differently on different types of inputs.
+<br><br>
+The evaluation technique we have employed is to visually exam the quality of the output image.
+<br>
+There are not really many tuning parameters we could pick.
+<br>1. Patch size: this is the size of each patch we used to fill the hole in the image. It should be slightly larger than the largest distinguishable texture element for the best performance.
+<br>2. Mask: this is the mask used for input image pre-processing. It is used to create holes from the image for which would later be filled by the algorithm.
+<br>3. Alpha: The normalization factor. Have kept the value as 255 for the best result.
+<br><br>
+Below are some brief demonstrations of the algorithm.
+<br>
+<div class='wrapper'>
+  <div><img style="width: 80%" alt="" src="imgs/exemplar_img1.png"></div>
+</div>
+<div class='wrapper'>
+  <div><img style="width: 80%" alt="" src="imgs/exemplar_img2.png"></div>
+</div>
+<br>
+* darker pixels means less confident
+<br><br>
+This is another example, where our algorithm outperforms the naive image filling technique:
+<br>
+<div class='wrapper'>
+  <div><img style="width: 80%" alt="" src="imgs/exemplar_img3.png"></div>
+</div>
+<br>
+Notice that according to these sample outputs, we can easily observe that our algorithm performs best when we are trying to fill hole in the input image where it was supposed to contain important information/semantics. This is expected as we have introduced new concepts -- confidence -- when performing hole-filling. With this approach we were able to recover certain important textures/information of the image. In summary, overall this algorithm has successfully fulfilled the goal of performing image inpainting with the most visually plausible backgrounds. 
+<br><br>
 
 <h4>Semantic Image Inpainting</h4>
 Considering that GAN is a learning-based technique, we will utilize a training dataset and a testing dataset for better accuracy and generalizability. Testing and training sets are extracted from Paris StreetView and ImageNet dataset. Paris StreetView dataset consists of 14,900 images for training and 100 images for testing. The visual class of dataset focuses on the Street View, such as houses, trees, street, skies, and other objects. Whereas ImageNet dataset contains about 15 million images associated with more than 20,000 categories. Considering the experimental configuration of Context Encode, we extract a subset of the ImageNet dataset in this experiment. Specifically, we randomly select 100,000 images from 1000 object categories according to the manner provided by Context Encoder. The testing set is painted in the same way of training progress. 
@@ -173,30 +203,33 @@ We hope that our experiments can reveal under which conditions does each model o
 <h4>Qualitative Results</h4>
 <h5>Success Cases</h5>
 <div class='wrapper'>
-  <div><img style="width: 100%" alt="" src="imgs/se3.png"></div>
-  <div><img style="width: 100%" alt="" src="imgs/res-01.gif"></div>
-  <div><img style="width: 60%" alt="" src="imgs/res-22.gif"></div>
+  <div><img style="width: 80%" alt="" src="imgs/se3.png"></div>
+  <div><img style="width: 80%" alt="" src="imgs/res-01.gif"></div>
+  <br>
+  <div><img style="width: 50%" alt="" src="imgs/res-22.gif"></div>
 
+
+  <div><img style="width: 80%" alt="" src="imgs/exemplar1.GIF"></div>
+  <br>
+  <div><img style="width: 80%" alt="" src="imgs/exemplar2.GIF"></div>
+  <div><img style="width: 80%" alt="" src="imgs/exemplar3.GIF"></div>
 </div>
-
+<br>
 <h5>Failure Cases</h5>
 <div class='wrapper'>
   <div><img style="width: 100%" alt="" src="imgs/res-09.gif"></div>
   <div><img style="width: 100%" alt="" src="imgs/f2.png"></div>
 </div>
-
+<br><br>
 <h4>Conclusion and Future Work</h4>
 For the sparse representation method, we believe this way of inpainting can be applied to many scenarios and the results are promising from our experiments. Still, there is still a huge space for us to tweak the parameters to achieve better results. Besides, as a drawback of this approach, it is impossible to find a fixed set of parameters that will work for all the images and we will need to bind the optimal set of parameters for different sizes of images. Still, filling a missing part of an image by a sparse representation of other patches has its reasonable logic. In the future, we will try different combinations of parameters as well as different cost functions.
 <br><br>
 Besides, the image completion using planar structure guidance does better than a naive approach. However, there are many drawbacks to this approach. First, the regenerated image is fuzzy compared to the ground-truth, and the boundary of artifacts is clearly visible no matter how good you are at tuning the hyperparameters. On the other hand, the algorithm is also destined to fail on more complex images like the first one we picked. To hypothetically improve the algorithm’s performance, we may increase the sampling from the nearest 2 neighbors to 4 or more neighbors, which will give a holistic view of the surroundings. We may also adjust the weights of the 4 cost functions defining our objective function in optimization.
 <br><br>
+The implementation of the Exemplar-based Image Inpainting performs as well as we expect. For the exemplar inpainting, our experiments have shown great results on the samples images. Because it’s replicating both the texture and the structure on the hole, the holes are filled in a way that fits the expected content while connecting well with surroundings. In the future, we plan to run this algorithm on portrait images to see its effectiveness on facial features. We also expect to check its function on text inpainting. From our experiments, we know that the algorithm works well on filling important information, and we wonder how it’s performing on the missing text. 
+<br><br>
 For Semantic Image Inpainting, we have seen great image inpainting performance on the Paris StreetView dataset, and will be applying our model on the ImageNet dataset for the final product.
 <br><br>
-The next step of our project is to finish implementing the Exemplar-based Image Inpainting. We will first generate textures and structures based on samples selected from surrounding regions. After that, we will compute patch priorities, propagate texture and structure information, and update confidence values. Then, we’ll optimize the implementation based on the performance of our code. 
-<br><br>
-After finishing implementation, we would use plenty of images as input. we will apply this algorithm on different (types) of input images and compare the results both qualitatively and quantitatively. Specifically, we’ll compare theirrun-time and aesthetic performance in handling text inpainting, portrait inpainting, images with large holes, etc. We will discuss what are the successful cases and what are the failure cases, then dig into some of the potential reasons behind each. 
-<br><br>
-After all that, we will make comparisons between the all inpainting approaches that we have implemented. We’ll analyze the strength and weakness of each implementation. Based on the comparisons, we also expect to come up with other insights into image inpainting.
 
 
 
@@ -243,12 +276,7 @@ Show several visual examples of inputs/outputs of your system (success cases and
     vol. 13, no. 9, pp. 1200-1212, Sept. 2004, doi: 10.1109/TIP.2004.833105.
   </li>
   <li>
-    [4] O. Le Meur, J. Gautier and C. Guillemot, "Examplar-based inpainting based on local geometry,"
-    <i>2011 18th IEEE International Conference on Image Processing</i>,
-    Brussels, 2011, pp. 3401-3404, doi: 10.1109/ICIP.2011.6116441.
-  </li>
-  <li>
-    [5] Zhang, Haoran & Hu, Zhenzhen & Luo, Changzhi & Zuo, Wangmeng & Wang, Meng. (2018).
+    [4] Zhang, Haoran & Hu, Zhenzhen & Luo, Changzhi & Zuo, Wangmeng & Wang, Meng. (2018).
     Semantic Image Inpainting with Progressive Generative Networks. 1939-1947. 10.1145/3240508.3240625.
   </li>
 </ul>
