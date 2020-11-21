@@ -49,14 +49,8 @@ color: #FF9900;
 <!--
 Please see <a href="http://vision.cs.utexas.edu/projects/adapted_attributes/">this</a> for an example of how to lay out the various details of your project. You may need to provide more details than this, beause you will not be submitting an associated paper to accompany the webpage. So the page should be self-contained
 -->
-
-<!-- Goal -->
-
-<!--
 <h3>Abstract</h3>
-
-One or two sentences on the motivation behind the problem you are solving. One or two sentences describing the approach you took. One or two sentences on the main result you obtained.
--->
+Our team aims to implement four inpainting algorithms, each introduced by an academic paper. We successfully implemented them in code and will be comparing their functionalities and performance below. In this report, we introduce the steps of these four algorithms, illustrate our experiments, and make qualitative analysis based on the sample images. 
 
 <br><br>
 <!-- figure -->
@@ -70,9 +64,6 @@ One or two sentences on the motivation behind the problem you are solving. One o
 
 <br><br>
 <!-- Introduction -->
-<h3>Abstract</h3>
-Our team aims to implement 4 inpainting algorithms introduced by 4 academic papers. We successfully implement them in code and compare their functionalities. In this report, we introduce the steps of those 4 algorithms, illustrate our experiments, and make qualitative analysis based on the sample images. 
-<br><br>
 <h3>Introduction</h3>
 
 There are many different types of image inpainting algorithms developed by researchers across the world. However, due to their differences in techniques and implementations each has significantly different results. Thus we decided to explore these techniques and compare their corresponding results.
@@ -142,6 +133,16 @@ For this method, we used the datasets from photo galleries provided by USPS, and
 <img style="width: 80%" alt="" src="imgs/outdoor_peu_iter.png"></br>
 We learn from those experiments that it is critical to set appropriate values for those parameters. The patch size has to have a size that encodes enough information to be useful for reconstruction. The alpha, generally, is always better to be set to a smaller value because a more sparse combination of patches normally has better results. The max iterations should be set to a larger value since it usually takes more iterations to find a good weight vector for a regular-sized picture.
 <br><br>
+We continue tweaking the parameters for different input images, and try to have a clearer understanding of to what extent does each parameter affect the final output. We can see below that the patch_size parameter does affect the result.
+<br>
+patch_size = 50
+<br>
+<img style="width: 50%" alt="" src="imgs/dict-learning-exp.png">
+<br>
+patch_size = 30
+<br>
+<img style="width: 70%" alt="" src="imgs/dict-learning-exp2.png">
+<br><br>
 
 <h4>Image Completion using Planar Structure Guidance</h4>
 We used a few of the authors’ provided images as well as our own photo collections to demonstrate the effect. The objective function we tried to minimize is a weighted combination of four loss functions: appearance cost, guidance cost, orthogonal direction cost, and proximity cost. We started with a resized image with low resolution to have just a small number of pixels to optimize, and gradually sharpened the starting image close to the original image size. Below is a table of costs for one sample image when the patch size is 9. Here we show how the average cost decreases as we run more iterations.</br>
@@ -203,35 +204,55 @@ We also experimented with different adversarial loss values, and found that valu
 <!-- <h4>Expectation of Outcome</h4>
 We hope that our experiments can reveal under which conditions does each model or algorithm perform the best. We also expect the experiments to reveal the similarities as well as differences between traditional computer vision methods and machine-learning-based algorithms. Besides, we want to see the effects of combining the results of individual models. However, there will be some uncertainties about the potential outcomes. We are not sure if the ensemble model, combining different models,  could outperform a single model in most cases. We are also not sure if modern ml-based algorithms, such as GAN, could outperform traditional methods in most scenarios.
 <br><br> -->
-<h4>Qualitative Results</h4>
-<h5>Success Cases</h5>
+<h3>Qualitative Results</h3>
+<h4>Success Cases</h4>
+<h5>Image Inpainting via Dictionary Learning and Sparse Representation [1]</h5>
+<br>
+<img style="width: 80%" alt="" src="imgs/dict-learning-success1.png">
+<br>
+<img style="width: 78%" alt="" src="imgs/dict-learning-success2.png">
+<br>
+<h5>Image Completion using Planar Structure Guidance [2]</h5>
+<br>
 <div class='wrapper'>
-  <div><img style="width: 80%" alt="" src="imgs/se3.png"></div>
-  <div><img style="width: 80%" alt="" src="imgs/res-01.gif"></div>
-  <br>
-  <div><img style="width: 50%" alt="" src="imgs/res-22.gif"></div>
-
-
+  <div><img style="width: 70%" alt="" src="imgs/res-01.gif"></div>
+  <div><img style="width: 60%" alt="" src="imgs/res-22.gif"></div>
+</div>
+<br>
+<h5>Exemplar-Based Image Inpainting [3]</h5>
+<br>
+<div class='wrapper'>
   <div><img style="width: 80%" alt="" src="imgs/exemplar1.GIF"></div>
-  <br>
   <div><img style="width: 80%" alt="" src="imgs/exemplar2.GIF"></div>
+  <br>
   <div><img style="width: 80%" alt="" src="imgs/exemplar3.GIF"></div>
 </div>
 <br>
-<h5>Failure Cases</h5>
+<h5>GAN - Semantic Image Inpainting [4]</h5>
+<br>
+<div class='wrapper'>
+  <div><img style="width: 100%" alt="" src="imgs/se3.png"></div>
+</div>
+<br>
+
+
+<br>
+<h4>Failure Cases</h4>
 <div class='wrapper'>
   <div><img style="width: 100%" alt="" src="imgs/res-09.gif"></div>
   <div><img style="width: 100%" alt="" src="imgs/f2.png"></div>
+  <br>
+  <div><img style="width: 100%" alt="" src="imgs/gan_failure.png"></div>
 </div>
 <br><br>
-<h4>Conclusion and Future Work</h4>
-For the sparse representation method, we believe this way of inpainting can be applied to many scenarios and the results are promising from our experiments. Still, there is still a huge space for us to tweak the parameters to achieve better results. Besides, as a drawback of this approach, it is impossible to find a fixed set of parameters that will work for all the images and we will need to bind the optimal set of parameters for different sizes of images. Still, filling a missing part of an image by a sparse representation of other patches has its reasonable logic. In the future, we will try different combinations of parameters as well as different cost functions.
+<h3>Conclusion and Future Work</h3>
+For the sparse representation method, we believe this way of inpainting can be applied to many scenarios and the results are promising from our experiments. Still, there is still a huge space for us to tweak the parameters to achieve better results. Besides, as a drawback of this approach, it is impossible to find a fixed set of parameters that will work for all the images and we will need to bind the optimal set of parameters for different sizes of images. Still, filling a missing part of an image by a sparse representation of other patches has its reasonable logic. Parameters tweaking, as expected, essentially affects the final output greatly given a majorly fixed model architecture. In this type of traditional patch-based method, it is significant to choose a proper patch size and learning rate. Though other parameters such as tolerance and max iterations can be tweaked, they will not make huge effects when both values are set beyond some threshold. We are still manually tweaking the parameters for this project, but we hope we can figure out a way to generate an appropriate set of parameters based on input information. 
 <br><br>
 Besides, the image completion using planar structure guidance does better than a naive approach. However, there are many drawbacks to this approach. First, the regenerated image is fuzzy compared to the ground-truth, and the boundary of artifacts is clearly visible no matter how good you are at tuning the hyperparameters. On the other hand, the algorithm is also destined to fail on more complex images like the first one we picked. To hypothetically improve the algorithm’s performance, we may increase the sampling from the nearest 2 neighbors to 4 or more neighbors, which will give a holistic view of the surroundings. We may also adjust the weights of the 4 cost functions defining our objective function in optimization.
 <br><br>
 The implementation of the Exemplar-based Image Inpainting performs as well as we expect. For the exemplar inpainting, our experiments have shown great results on the samples images. Because it’s replicating both the texture and the structure on the hole, the holes are filled in a way that fits the expected content while connecting well with surroundings. In the future, we plan to run this algorithm on portrait images to see its effectiveness on facial features. We also expect to check its function on text inpainting. From our experiments, we know that the algorithm works well on filling important information, and we wonder how it’s performing on the missing text. 
 <br><br>
-For Semantic Image Inpainting, we have seen great image inpainting performance on the Paris StreetView dataset, and will be applying our model on the ImageNet dataset for the final product.
+For Semantic Image Inpainting, as showcased above, we can see that the progressive image inpainting framework provided promising results to a variety of images. Beyond its practicality, the framework also evaluates the image and performs hole filling effectively in a single forward pass. There are, however, areas and factors that could be improved in the future. We have only demonstrated hole filling in static regions, therefore, performance on images where corrupted regions do not have a fixed shape or location cannot be predicted. Moreover, we would have to determine the specifics of each inpainting phase if we do encounter variable corrupted regions.
 <br><br>
 
 
